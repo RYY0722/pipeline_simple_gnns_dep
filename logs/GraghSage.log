@@ -1,0 +1,12 @@
+nodes num 42318
+Gettng index
+Gettng class_train_dict
+Gettng class_valid_dict
+Gettng class_test_dict
+Training GraghSage for on Amazon_eletronics (5-way 3-shot) Q: 10
+Repeat 0: Training GraghSage for on Amazon_eletronics (5-way 3-shot)
+-------Episode 100-------
+Meta-Train_Accuracy: 0.266930693069307
+Meta-valid_Accuracy: 0.4332000000000001, Meta-valid_F1: 0.4139583571119192
+Meta-Test_Accuracy: 0.41359999999999997, Meta-Test_F1: 0.38948796858217394
+Meta-Test_Accuracy: 0.41359999999999997, Meta-Test_F1: 0.38948796858217394

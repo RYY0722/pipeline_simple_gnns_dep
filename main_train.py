@@ -125,6 +125,7 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     if args.cuda:
         torch.cuda.manual_seed(args.seed)
+        print("Using GPU acceleration... ")
        
     # Model and optimizer
     m = import_module('models.' + args.model)

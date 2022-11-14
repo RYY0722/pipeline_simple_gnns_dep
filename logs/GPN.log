@@ -1,0 +1,9 @@
+nodes num 42318
+Gettng index
+Gettng class_train_dict
+Gettng class_valid_dict
+Gettng class_test_dict
+Training GPN for on Amazon_eletronics (5-way 3-shot) Q: 10
+Repeat 0: Training GPN for on Amazon_eletronics (5-way 3-shot)
+-------Episode 100-------
+Meta-Train_Accuracy: 0.5863366336633664
