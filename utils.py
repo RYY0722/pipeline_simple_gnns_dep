@@ -7,7 +7,10 @@ from sklearn import preprocessing
 from sklearn.metrics import f1_score
 
 valid_num_dic = {'Amazon_clothing': 17, 'Amazon_eletronics': 36, 'dblp': 27}
-meta_info_dataset = {'Amazon_clothing':{'K_set':[], 'N_set':[], 'Q':10}}
+## N, K --> N-way & K-shot
+shot_way_info = {'Amazon_clothing':{'pairs':[(5,3), (5,5), (3,3), (3,2) ], 'Q':10},
+                 'Amazon_eletronics':{'pairs':[(5,3), (5,5), (10,5), (10,3)],'Q':10},
+                 'dblp':{'pairs':[(5,3), (5,5), (10,5), (10,3)],'Q':10}}
 
 def load_data(dataset_source):
     n1s = []

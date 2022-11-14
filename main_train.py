@@ -14,6 +14,7 @@ from collections import defaultdict
 from importlib import import_module
 import networkx as nx
 import json
+from utils import shot_way_info
 # Training settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_cuda', action='store_true', help='Disables CUDA training.')
@@ -124,100 +125,97 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     if args.cuda:
         torch.cuda.manual_seed(args.seed)
-
-    # Load data
-    dataset = args.dataset
-    adj, features, labels, degrees, class_list_train, class_list_valid, class_list_test, id_by_class = load_data(dataset)
-    # adj = adj.to_dense()
-    if args.model in ['GAT', 'GraghSage']:
-        D = nx.DiGraph(adj.to_dense().numpy())
-        edge_lst = nx.to_pandas_edgelist(D)
-        edge_lst = [edge_lst['source'], edge_lst['target']]
-        adj = torch.Tensor(edge_lst).long()
-        del D, edge_lst
-        
+       
     # Model and optimizer
     m = import_module('models.' + args.model)
-    model =  m.model(features.shape[1], args.hidden, args.dropout)
-    # model =  m.model(features.shape[1], args.hidden)
 
-    optimizer = optim.Adam(model.parameters(),
-                        lr=args.lr, weight_decay=args.weight_decay)
+    # N_set=[5,10]
+    # K_set=[3,5]
 
-    if args.cuda:
-        model.cuda()
-        features = features.cuda()
-        adj = adj.cuda()
-        labels = labels.cuda()
-        degrees = degrees.cuda()
-    N_set=[5,10]
-    K_set=[3,5]
     results=defaultdict(dict)
-    meta_test_acc_total = np.zeros((5))
-    meta_test_f1_total = np.zeros((5))
-    for dataset in ['Amazon_clothing']:
-        args.dataset = dataset
-        for N in N_set:
-            for K in K_set: # num of labeled nodes
-                args.way = N
-                args.shot = K
-                print("Training %s for on %s (%d-way %d-shot)" % (args.model, args.dataset, N, K))
-                meta_test_acc_total = np.zeros((5))
-                meta_test_f1_total = np.zeros((5))
-                for repeat in range(num_repeat):
-                    print("Repeat %d: Training %s for on %s (%d-way %d-shot)" % (repeat, args.model, args.dataset, N, K))
-                    n_way = args.way
-                    k_shot = args.shot
-                    n_query = args.qry
-                    meta_test_num = 50
-                    meta_valid_num = 50
+    meta_test_acc_total = np.zeros((num_repeat))
+    meta_test_f1_total = np.zeros((num_repeat))
+    for dataset in ['Amazon_clothing','Amazon_eletronics','dblp']:
+        adj, features, labels, degrees, class_list_train, class_list_valid, class_list_test, id_by_class = load_data(dataset)
+        # adj = adj.to_dense()
+        if args.model in ['GAT', 'GraghSage']:
+            D = nx.DiGraph(adj.to_dense().numpy())
+            edge_lst = nx.to_pandas_edgelist(D)
+            edge_lst = [edge_lst['source'], edge_lst['target']]
+            adj = torch.Tensor(edge_lst).long()
+            del D, edge_lst
+        shot_way_pairs = shot_way_info[dataset]['pairs']
+        model =  m.model(features.shape[1], args.hidden, args.dropout)
 
+        for N, K in shot_way_pairs:
+            args.way = N
+            args.shot = K
+            # model =  m.model(features.shape[1], args.hidden)
 
-                    # Sampling a pool of tasks for validation/testing
-                    valid_pool = [task_generator(id_by_class, class_list_valid, n_way, k_shot, n_query) for i in range(meta_valid_num)]
-                    test_pool = [task_generator(id_by_class, class_list_test, n_way, k_shot, n_query) for i in range(meta_test_num)]
+            optimizer = optim.Adam(model.parameters(),
+                                lr=args.lr, weight_decay=args.weight_decay)
 
-                    # Train model
-                    t_total = time.time()
-                    meta_train_acc = []
-                    best_valid_acc = 0
-                    for episode in range(args.episodes):
-                        id_support, id_query, class_selected = \
-                            task_generator(id_by_class, class_list_train, n_way, k_shot, n_query)
-                        acc_train, f1_train = train(class_selected, id_support, id_query, n_way, k_shot)
-                        meta_train_acc.append(acc_train)
-                        if episode > 0 and episode % 10 == 0:    
-                            print("-------Episode {}-------".format(episode))
-                            print("Meta-Train_Accuracy: {}".format(np.array(meta_train_acc).mean(axis=0)))
+            if args.cuda:
+                model.cuda()
+                features = features.cuda()
+                adj = adj.cuda()
+                labels = labels.cuda()
+                degrees = degrees.cuda()
+            meta_test_acc_total = np.zeros((num_repeat))
+            meta_test_f1_total = np.zeros((num_repeat))
+            n_way = args.way
+            k_shot = args.shot
+            n_query = shot_way_info[dataset]['Q']
+            meta_test_num = 50
+            meta_valid_num = 50
+            print("Training %s for on %s (%d-way %d-shot) Q: %d" % (args.model, args.dataset, N, K, n_query))
+            for repeat in range(num_repeat):
+                print("Repeat %d: Training %s for on %s (%d-way %d-shot)" % (repeat, args.model, args.dataset, N, K))
+                # Sampling a pool of tasks for validation/testing
+                valid_pool = [task_generator(id_by_class, class_list_valid, n_way, k_shot, n_query) for i in range(meta_valid_num)]
+                test_pool = [task_generator(id_by_class, class_list_test, n_way, k_shot, n_query) for i in range(meta_test_num)]
 
-                            # validation
-                            meta_test_acc = []
-                            meta_test_f1 = []
-                            for idx in range(meta_valid_num):
-                                id_support, id_query, class_selected = valid_pool[idx]
-                                acc_test, f1_test = test(class_selected, id_support, id_query, n_way, k_shot)
-                                meta_test_acc.append(acc_test)
-                                meta_test_f1.append(f1_test)
-                            print("Meta-valid_Accuracy: {}, Meta-valid_F1: {}".format(np.array(meta_test_acc).mean(axis=0),
-                                                                                        np.array(meta_test_f1).mean(axis=0)))
-                            # testing
-                            meta_test_acc = []
-                            meta_test_f1 = []
-                            for idx in range(meta_test_num):
-                                id_support, id_query, class_selected = test_pool[idx]
-                                acc_test, f1_test = test(class_selected, id_support, id_query, n_way, k_shot)
-                                meta_test_acc.append(acc_test)
-                                meta_test_f1.append(f1_test)
-                            valid_acc = np.array(meta_test_acc).mean(axis=0)
-                            if valid_acc > best_valid_acc:
-                                # best_test_accs = temp_accs
-                                best_valid_acc = valid_acc
-                                meta_test_acc_total[repeat] = np.array(meta_test_acc).mean(axis=0)
-                                meta_test_f1_total[repeat] = np.array(meta_test_f1).mean(axis=0)
-                            print("Meta-Test_Accuracy: {}, Meta-Test_F1: {}".format(meta_test_acc_total[repeat], meta_test_f1_total[repeat]))
-                            # meta_test_acc_total[repeat] = np.array(meta_test_acc).mean(axis=0)
-                            # meta_test_f1_total[repeat] = np.array(meta_test_f1).mean(axis=0)
-                            print("Meta-Test_Accuracy: {}, Meta-Test_F1: {}".format(meta_test_acc_total[repeat], meta_test_f1_total[repeat]))
+                # Train model
+                t_total = time.time()
+                meta_train_acc = []
+                best_valid_acc = 0
+                for episode in range(args.episodes):
+                    id_support, id_query, class_selected = \
+                        task_generator(id_by_class, class_list_train, n_way, k_shot, n_query)
+                    acc_train, f1_train = train(class_selected, id_support, id_query, n_way, k_shot)
+                    meta_train_acc.append(acc_train)
+                    if episode > 0 and episode % 10 == 0:    
+                        print("-------Episode {}-------".format(episode))
+                        print("Meta-Train_Accuracy: {}".format(np.array(meta_train_acc).mean(axis=0)))
+
+                        # validation
+                        meta_test_acc = []
+                        meta_test_f1 = []
+                        for idx in range(meta_valid_num):
+                            id_support, id_query, class_selected = valid_pool[idx]
+                            acc_test, f1_test = test(class_selected, id_support, id_query, n_way, k_shot)
+                            meta_test_acc.append(acc_test)
+                            meta_test_f1.append(f1_test)
+                        print("Meta-valid_Accuracy: {}, Meta-valid_F1: {}".format(np.array(meta_test_acc).mean(axis=0),
+                                                                                    np.array(meta_test_f1).mean(axis=0)))
+                        # testing
+                        meta_test_acc = []
+                        meta_test_f1 = []
+                        for idx in range(meta_test_num):
+                            id_support, id_query, class_selected = test_pool[idx]
+                            acc_test, f1_test = test(class_selected, id_support, id_query, n_way, k_shot)
+                            meta_test_acc.append(acc_test)
+                            meta_test_f1.append(f1_test)
+                        valid_acc = np.array(meta_test_acc).mean(axis=0)
+                        if valid_acc > best_valid_acc:
+                            # best_test_accs = temp_accs
+                            best_valid_acc = valid_acc
+                            meta_test_acc_total[repeat] = np.array(meta_test_acc).mean(axis=0)
+                            meta_test_f1_total[repeat] = np.array(meta_test_f1).mean(axis=0)
+                        print("Meta-Test_Accuracy: {}, Meta-Test_F1: {}".format(meta_test_acc_total[repeat], meta_test_f1_total[repeat]))
+                        # meta_test_acc_total[repeat] = np.array(meta_test_acc).mean(axis=0)
+                        # meta_test_f1_total[repeat] = np.array(meta_test_f1).mean(axis=0)
+                        print("Meta-Test_Accuracy: {}, Meta-Test_F1: {}".format(meta_test_acc_total[repeat], meta_test_f1_total[repeat]))
 
                 print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
                 print("---------- F1 ------------")
