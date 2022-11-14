@@ -31,3 +31,7 @@ sh train.sh
 - Model: specify in *train.sh* 
 - Datasets: specify in *main_train.py*
 
+### Result table
+
+[results.xlsx](https://hkustconnect-my.sharepoint.com/:x:/g/personal/yruanaf_connect_ust_hk/EZH4ct9QFlNNif4KfH6FLMEBzPl3C4kzhsjAF1H3D1i24Q?e=LnCrEI)
+
