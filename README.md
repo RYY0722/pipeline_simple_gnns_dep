@@ -18,7 +18,7 @@ My settings:
 
 - PyTorch    1.10.1+cpu
 
-- for pyg, I follow the following link [关于protobuf报错：If this call came from a _pb2.py file, your generated code is out of date and must be regenerated with protoc >= 3.19.0. - BooTurbo - 博客园 (cnblogs.com)](https://www.cnblogs.com/booturbo/p/16339195.html)
+- for pyg, I follow the following link [(74条消息) pytorch正确的安装torch_geometric,无bug、多种类版本_模糊包的博客-CSDN博客_安装torch版本](https://blog.csdn.net/xinjieyuan/article/details/120483494)
 
 - Used the below command to solve some bugs (forgot the details.. )
 
