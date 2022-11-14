@@ -12,7 +12,7 @@ import json
 from collections import defaultdict
 import tqdm
 
-valid_num_dic = {'Amazon_clothing': 17, 'Amazon_eletronics': 36, 'dblp': 27}
+valid_num_dic = {'Amazon_clothing': 20, 'Amazon_eletronics': 36, 'dblp': 27}
 ## N, K --> N-way & K-shot
 shot_way_info = {'Amazon_clothing':{'pairs':[(5,3), (5,5), (3,3), (3,2) ], 'Q':10},
                  'Amazon_eletronics':{'pairs':[(5,3), (5,5), (10,5), (10,3)],'Q':10},

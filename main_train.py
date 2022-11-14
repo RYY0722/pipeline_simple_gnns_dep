@@ -185,7 +185,7 @@ if __name__ == '__main__':
                         task_generator(id_by_class, class_list_train, n_way, k_shot, n_query)
                     acc_train, f1_train = train(class_selected, id_support, id_query, n_way, k_shot)
                     meta_train_acc.append(acc_train)
-                    if episode > 0 and episode % 100 == 0:    
+                    if (episode > 0 and episode % 100 == 0) or (episode == args.episodes-1):    
                         print("-------Episode {}-------".format(episode))
                         print("Meta-Train_Accuracy: {}".format(np.array(meta_train_acc).mean(axis=0)))
 

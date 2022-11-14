@@ -1,14 +1,14 @@
 {
-    "5-way 3-shot 0-repeat": 0.684,
-    "5-way 3-shot 1-repeat": 0.6672,
-    "5-way 3-shot 2-repeat": 0.642,
-    "5-way 3-shot 3-repeat": 0.6464,
-    "5-way 3-shot 4-repeat": 0.6416000000000001,
-    "5-way 3-shot": 0.6562399999999999,
-    "5-way 3-shot_print": "acc: 0.6562",
-    "5-way 5-shot 0-repeat": 0.6744,
-    "5-way 5-shot 1-repeat": 0.6659999999999999,
-    "5-way 5-shot 2-repeat": 0.6968000000000001,
-    "5-way 5-shot 3-repeat": 0.7096000000000001,
-    "5-way 5-shot 4-repeat": 0.0
+    "5-way 3-shot 0-repeat": 0.39559999999999995,
+    "5-way 3-shot 1-repeat": 0.4332000000000001,
+    "5-way 3-shot": 0.4144,
+    "5-way 3-shot_print": "acc: 0.4144",
+    "5-way 5-shot 0-repeat": 0.41840000000000005,
+    "5-way 5-shot 1-repeat": 0.41720000000000007,
+    "5-way 5-shot": 0.41780000000000006,
+    "5-way 5-shot_print": "acc: 0.4178",
+    "10-way 5-shot 0-repeat": 0.315,
+    "10-way 5-shot 1-repeat": 0.42019999999999996,
+    "10-way 5-shot": 0.3676,
+    "10-way 5-shot_print": "acc: 0.3676"
 }
