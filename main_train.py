@@ -227,7 +227,7 @@ if __name__ == '__main__':
                     print(meta_test_acc_total[repeat])
                     results[dataset]['{}-way {}-shot {}-repeat'.format(N,K,repeat)]= meta_test_acc_total[repeat]
 
-                    json.dump(results[dataset],open('./{}-result_{}.json'.format(args.model, dataset),'w'), indent=4) 
+                    json.dump(results[dataset],open('./results/{}-result_{}.json'.format(args.model, dataset),'w'), indent=4) 
 
 
                 accs=[]
@@ -238,5 +238,5 @@ if __name__ == '__main__':
             results[dataset]['{}-way {}-shot'.format(N,K)]=np.mean(accs)
             results[dataset]['{}-way {}-shot_print'.format(N,K)]='acc: {:.4f}'.format(np.mean(accs))
 
-            json.dump(results[dataset],open('./{}-result_{}.json'.format(args.model, dataset),'w'), indent=4)   
+            json.dump(results[dataset],open('./results/{}-result_{}.json'.format(args.model, dataset),'w'), indent=4)   
     print("Done :)")
