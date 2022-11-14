@@ -1,0 +1,61 @@
+nodes num 42318
+Gettng index
+Gettng class_train_dict
+Gettng class_valid_dict
+Gettng class_test_dict
+Training GCN for on Amazon_eletronics (5-way 3-shot) Q: 10
+Repeat 0: Training GCN for on Amazon_eletronics (5-way 3-shot)
+-------Episode 49-------
+Meta-Train_Accuracy: 0.39039999999999997
+Meta-valid_Accuracy: 0.3872, Meta-valid_F1: 0.31262178648931876
+Meta-Test_Accuracy: 0.39559999999999995, Meta-Test_F1: 0.3355045315485269
+Meta-Test_Accuracy: 0.39559999999999995, Meta-Test_F1: 0.3355045315485269
+Total time elapsed: 19.7468s
+---------- F1 ------------
+0.3355045315485269
+0.0
+---------- Acc ------------
+0.39559999999999995
+0.0
+Repeat 1: Training GCN for on Amazon_eletronics (5-way 3-shot)
+-------Episode 49-------
+Meta-Train_Accuracy: 0.41320000000000007
+Meta-valid_Accuracy: 0.4576, Meta-valid_F1: 0.4075792971745573
+Meta-Test_Accuracy: 0.4332000000000001, Meta-Test_F1: 0.3875778300120987
+Meta-Test_Accuracy: 0.4332000000000001, Meta-Test_F1: 0.3875778300120987
+Total time elapsed: 19.9654s
+---------- F1 ------------
+0.3355045315485269
+0.3875778300120987
+---------- Acc ------------
+0.39559999999999995
+0.4332000000000001
+Training GCN for on Amazon_eletronics (5-way 5-shot) Q: 10
+Repeat 0: Training GCN for on Amazon_eletronics (5-way 5-shot)
+-------Episode 49-------
+Meta-Train_Accuracy: 0.4808
+Meta-valid_Accuracy: 0.5184, Meta-valid_F1: 0.47850339774307393
+Meta-Test_Accuracy: 0.41840000000000005, Meta-Test_F1: 0.37571893964572056
+Meta-Test_Accuracy: 0.41840000000000005, Meta-Test_F1: 0.37571893964572056
+Total time elapsed: 19.5024s
+---------- F1 ------------
+0.37571893964572056
+0.0
+---------- Acc ------------
+0.41840000000000005
+0.0
+Repeat 1: Training GCN for on Amazon_eletronics (5-way 5-shot)
+-------Episode 49-------
+Meta-Train_Accuracy: 0.48800000000000004
+Meta-valid_Accuracy: 0.47759999999999997, Meta-valid_F1: 0.4253149104718127
+Meta-Test_Accuracy: 0.41720000000000007, Meta-Test_F1: 0.3492558799855425
+Meta-Test_Accuracy: 0.41720000000000007, Meta-Test_F1: 0.3492558799855425
+Total time elapsed: 19.9181s
+---------- F1 ------------
+0.37571893964572056
+0.3492558799855425
+---------- Acc ------------
+0.41840000000000005
+0.41720000000000007
+Training GCN for on Amazon_eletronics (10-way 5-shot) Q: 10
+Repeat 0: Training GCN for on Amazon_eletronics (10-way 5-shot)
