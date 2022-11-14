@@ -4,7 +4,7 @@ from __future__ import print_function
 import time
 import argparse
 import numpy as np
-
+import random
 import torch
 import torch.optim as optim
 
@@ -14,7 +14,8 @@ from collections import defaultdict
 from importlib import import_module
 import networkx as nx
 import json
-from utils import shot_way_info
+from dataset import shot_way_info, load_data
+
 # Training settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_cuda', action='store_true', help='Disables CUDA training.')
@@ -34,14 +35,13 @@ parser.add_argument('--dropout', type=float, default=0.5,
 parser.add_argument('--way', type=int, default=5, help='way.')
 parser.add_argument('--shot', type=int, default=5, help='shot.')
 parser.add_argument('--qry', type=int, help='k shot for query set', default=10)
-parser.add_argument('--dataset', default='Amazon_clothing', help='Dataset:Amazon_clothing/Amazon_eletronics/dblp')
-
 
 #### added by ryy
 parser.add_argument('--model', type=str, help='Model name: GCN/GAT/GPN/GraghSage', default='GAT')
-num_repeat = 2  ### for debug use
+parser.add_argument('--num_repeat', type=int, help='Repeat times', default=5)
 args = parser.parse_args()
 args.cuda = args.use_cuda and torch.cuda.is_available()
+num_repeat = args.num_repeat
 
 
 
@@ -135,8 +135,12 @@ if __name__ == '__main__':
     results=defaultdict(dict)
     meta_test_acc_total = np.zeros((num_repeat))
     meta_test_f1_total = np.zeros((num_repeat))
-    for dataset in ['Amazon_clothing','Amazon_eletronics','dblp']:
-        adj, features, labels, degrees, class_list_train, class_list_valid, class_list_test, id_by_class = load_data(dataset)
+    for dataset in ['Amazon_eletronics','Amazon_clothing','dblp']:
+        adj, features, labels, idx_train, idx_valid, idx_test, n1s, n2s, class_train_dict, class_test_dict, class_valid_dict, id_by_class, degrees = load_data(dataset)
+        class_list_valid = list(class_valid_dict)
+        class_list_test = list(class_test_dict)
+        class_list_train = list(class_train_dict)
+        # adj, features, labels, degrees, class_list_train, class_list_valid, class_list_test, id_by_class = load_data(dataset)
         # adj = adj.to_dense()
         if args.model in ['GAT', 'GraghSage']:
             D = nx.DiGraph(adj.to_dense().numpy())
@@ -145,22 +149,11 @@ if __name__ == '__main__':
             adj = torch.Tensor(edge_lst).long()
             del D, edge_lst
         shot_way_pairs = shot_way_info[dataset]['pairs']
-        model =  m.model(features.shape[1], args.hidden, args.dropout)
 
         for N, K in shot_way_pairs:
             args.way = N
             args.shot = K
-            # model =  m.model(features.shape[1], args.hidden)
 
-            optimizer = optim.Adam(model.parameters(),
-                                lr=args.lr, weight_decay=args.weight_decay)
-
-            if args.cuda:
-                model.cuda()
-                features = features.cuda()
-                adj = adj.cuda()
-                labels = labels.cuda()
-                degrees = degrees.cuda()
             meta_test_acc_total = np.zeros((num_repeat))
             meta_test_f1_total = np.zeros((num_repeat))
             n_way = args.way
@@ -168,9 +161,17 @@ if __name__ == '__main__':
             n_query = shot_way_info[dataset]['Q']
             meta_test_num = 50
             meta_valid_num = 50
-            print("Training %s for on %s (%d-way %d-shot) Q: %d" % (args.model, args.dataset, N, K, n_query))
+            print("Training %s for on %s (%d-way %d-shot) Q: %d" % (args.model, dataset, N, K, n_query))
             for repeat in range(num_repeat):
-                print("Repeat %d: Training %s for on %s (%d-way %d-shot)" % (repeat, args.model, args.dataset, N, K))
+                model =  m.model(features.shape[1], args.hidden, args.dropout)
+                optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+                if args.cuda:
+                    model.cuda()
+                    features = features.cuda()
+                    adj = adj.cuda()
+                    labels = labels.cuda()
+                    degrees = degrees.cuda()
+                print("Repeat %d: Training %s for on %s (%d-way %d-shot)" % (repeat, args.model, dataset, N, K))
                 # Sampling a pool of tasks for validation/testing
                 valid_pool = [task_generator(id_by_class, class_list_valid, n_way, k_shot, n_query) for i in range(meta_valid_num)]
                 test_pool = [task_generator(id_by_class, class_list_test, n_way, k_shot, n_query) for i in range(meta_test_num)]
@@ -184,7 +185,7 @@ if __name__ == '__main__':
                         task_generator(id_by_class, class_list_train, n_way, k_shot, n_query)
                     acc_train, f1_train = train(class_selected, id_support, id_query, n_way, k_shot)
                     meta_train_acc.append(acc_train)
-                    if episode > 0 and episode % 10 == 0:    
+                    if episode > 0 and episode % 100 == 0:    
                         print("-------Episode {}-------".format(episode))
                         print("Meta-Train_Accuracy: {}".format(np.array(meta_train_acc).mean(axis=0)))
 
