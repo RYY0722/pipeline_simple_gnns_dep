@@ -7,8 +7,8 @@
     "5-way 3-shot": 0.6562399999999999,
     "5-way 3-shot_print": "acc: 0.6562",
     "5-way 5-shot 0-repeat": 0.6744,
-    "5-way 5-shot 1-repeat": 0.0,
-    "5-way 5-shot 2-repeat": 0.0,
-    "5-way 5-shot 3-repeat": 0.0,
+    "5-way 5-shot 1-repeat": 0.6659999999999999,
+    "5-way 5-shot 2-repeat": 0.6968000000000001,
+    "5-way 5-shot 3-repeat": 0.7096000000000001,
     "5-way 5-shot 4-repeat": 0.0
 }
