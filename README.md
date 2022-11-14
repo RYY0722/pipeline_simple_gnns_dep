@@ -1,31 +1,33 @@
-Graph Prototypical Networks for Few-shot Learning on Attributed Networks (CIKM2020)
-============
+### Main structure from
 
-## Graph Prototypical Networks (GPN)
+[kaize0409/GPN_Graph-Few-shot: Implementation of CIKM2020 -- Graph Prototypical Networks for Few-shot Learning on Attributed Networks (github.com)](https://github.com/kaize0409/GPN_Graph-Few-shot)
 
-This is the source code of paper ["Graph Prototypical Networks for Few-shot Learning on Attributed Networks"](https://arxiv.org/pdf/2006.12739.pdf).
-![The proposed framework](GPN.png)
+### Models implementation from
 
-## Requirements
-python==3.6.6 
+[colflip/gnns_fewshot: code implementation of GNNs in few-shot learning: GCN, GAT, GraphSAGE to the node classification task of some datasets. (github.com)](https://github.com/colflip/gnns_fewshot)
 
-torch==1.4.0
+Note: for this, the following dependencies are required
 
-## Usage
-```python train_gpn.py --shot 5 --way 5 --episodes 1000 --dataset dblp --dropout 0.5 --use_cuda```
+- Python ≥ 3.10
+- PyTorch ≥ 11.3
+- pyg ≥ 1.12.0
 
-## Citation
+My settings:
 
-Please cite our paper if you use this code in your own work:
+- Python 3.9
 
-```
-@inproceedings{ding2020graph,
-  title={Graph prototypical networks for few-shot learning on attributed networks},
-  author={Ding, Kaize and Wang, Jianling and Li, Jundong and Shu, Kai and Liu, Chenghao and Liu, Huan},
-  booktitle={Proceedings of the 29th ACM International Conference on Information \& Knowledge Management},
-  pages={295--304},
-  year={2020}
-}
-```
+- PyTorch    1.10.1+cpu
 
+- for pyg, I follow the following link [关于protobuf报错：If this call came from a _pb2.py file, your generated code is out of date and must be regenerated with protoc >= 3.19.0. - BooTurbo - 博客园 (cnblogs.com)](https://www.cnblogs.com/booturbo/p/16339195.html)
+
+- Used the below command to solve some bugs (forgot the details.. )
+
+  ​    pip3 install --upgrade protobuf==3.20.1
+
+### Train a model
+
+sh train.sh
+
+- Model: specify in *train.sh* 
+- Datasets: specify in *main_train.py*
 

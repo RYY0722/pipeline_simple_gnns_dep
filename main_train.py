@@ -120,7 +120,6 @@ def test(class_selected, id_support, id_query, n_way, k_shot):
 
 
 if __name__ == '__main__':
-    args.model = 'GraghSage'
     random.seed(args.seed)
     torch.manual_seed(args.seed)
     if args.cuda:
